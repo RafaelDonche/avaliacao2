@@ -47,7 +47,7 @@ public class TelaFavoritos extends AppCompatActivity {
     SearchView searchView;
 
     ArrayList<Digimon> digimonArrayList = new ArrayList<Digimon>();
-    ArrayList<Digimon> digimonArrayListCopia = new ArrayList<Digimon>();
+    ArrayList<Digimon> digimonArrayListCopia;
 
     ImageView logout;
 
@@ -76,38 +76,40 @@ public class TelaFavoritos extends AppCompatActivity {
         Intent iLogout = new Intent(TelaFavoritos.this, MainActivity.class);
         Intent iBack = new Intent(TelaFavoritos.this, TelaListagemApi.class);
 
-        databaseReference.addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                Digimon p = snapshot.getValue(Digimon.class);
-                digimonArrayList.add(p);
-                digimonArrayListCopia.add(p);
-            }
+//        databaseReference.addChildEventListener(new ChildEventListener() {
+//            @Override
+//            public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+//                Digimon p = snapshot.getValue(Digimon.class);
+//                digimonArrayList.add(p);
+//                digimonArrayListCopia.add(p);
+//            }
+//
+//            @Override
+//            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+//
+//            }
+//
+//            @Override
+//            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+//                Digimon p = snapshot.getValue(Digimon.class);
+//                digimonArrayList.remove(p);
+//                digimonArrayListCopia.remove(p);
+//            }
+//
+//            @Override
+//            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+//
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError error) {
+//
+//            }
+//        });
+//
+//        configurarAdapter();
 
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
-            }
-
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
-                Digimon p = snapshot.getValue(Digimon.class);
-                digimonArrayList.remove(p);
-                digimonArrayListCopia.remove(p);
-            }
-
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
-
-        configurarAdapter();
+        setInfo();
 
         logout.setOnClickListener(view -> {
             mAuth.signOut();
@@ -140,6 +142,41 @@ public class TelaFavoritos extends AppCompatActivity {
                 configurarAdapter();
 
                 return false;
+            }
+        });
+    }
+
+    private void setInfo() {
+        Query query;
+
+        //limpando o array para a consulta
+        digimonArrayList.clear();
+
+        //o caminho da query no Firebase (todos os filmes)
+        query = databaseReference;
+
+        //execução da query. Caso haja dados, cai no método onDataChange
+        query.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                //este método é assíncrono, se não houver validação dos dados,
+                //a lista será montada incorretamente pois não aguarda a consulta
+                //assim, o if seguinte é necessário:
+                if (dataSnapshot != null) {
+                    for (DataSnapshot objDataSnapshot1 : dataSnapshot.getChildren()) {
+                        Digimon d = objDataSnapshot1.getValue(Digimon.class);
+                        digimonArrayList.add(d);
+                    }
+                    digimonArrayListCopia = new ArrayList<>(digimonArrayList);
+                    //setRecyclerView() para montagem e configuração da RecyclerView mas
+                    //neste caso, setRecyclerView() tem que ser chamado aqui (dentro e ao final de onDataChange),
+                    //de forma que é executado somente após os dados acima serem baixados do Firebase
+                    configurarAdapter();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
             }
         });
     }
