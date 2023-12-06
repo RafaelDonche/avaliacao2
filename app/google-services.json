@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "230505917625",
+    "firebase_url": "https://avaliacao2-be188-default-rtdb.firebaseio.com",
+    "project_id": "avaliacao2-be188",
+    "storage_bucket": "avaliacao2-be188.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:230505917625:android:c54137ad1d26854153bf68",
+        "android_client_info": {
+          "package_name": "com.example.avaliacao2"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBq6iH1uiXuJT68XFmEfFUteIkS_i-B9SI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
